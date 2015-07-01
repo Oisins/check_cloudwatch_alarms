@@ -6,11 +6,9 @@ from mock import Mock
 from check_enabled_alarms import DisabledAlarms
 
 
-CONNECT_TO_REGION_RESULT = 'true'
 REGIONS = ['eu-west-1', 'us-east-1', 'sa-east-1']
 AWS_ACCESS_KEY_ID = "ABC"
 AWS_SECRET_ACCESS_KEY = "ABC"
-
 
 MetricsMockTrue = Mock()
 MetricsMockTrue.actions_enabled = 'true'
