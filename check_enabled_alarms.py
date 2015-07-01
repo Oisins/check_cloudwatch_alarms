@@ -2,6 +2,7 @@
 import boto.ec2.cloudwatch
 import argparse
 import nagiosplugin
+import json
 
 
 disabledAlarms = list()
@@ -14,7 +15,7 @@ class Summary(nagiosplugin.Summary):
 
 class DisabledAlarms(nagiosplugin.Resource):
     def __init__(self, regions, key_id, key):
-        self.regions = regions
+        self.regions = regions.split(",")
         self.key_id = key_id
         self.key = key
         if self.regions is None:
@@ -37,11 +38,12 @@ class DisabledAlarms(nagiosplugin.Resource):
 @nagiosplugin.guarded
 def main():
     parser = argparse.ArgumentParser(description="Get Regions")  # Get Region from ArgsParse
-    parser.add_argument("-r", dest="regions", type=str, required=True, nargs='+', help="set Regions to check Alarms on")
-    parser.add_argument("-kID", dest="key_id", type=str, required=True, help="AWS Access Ked ID")
-    parser.add_argument("-k", dest="key", type=str, required=True, help="AWS Secret Access Key")
+    parser.add_argument("-r", dest="regions", type=str, required=True, help="set Regions to check Alarms on")
+    parser.add_argument("-c", dest="file", type=str, required=True, help="AWS Access Key File")
     args = parser.parse_args()
-    check = nagiosplugin.Check(DisabledAlarms(args.regions, args.key_id, args.key), nagiosplugin.ScalarContext('disabledAlarms', 1), Summary())
+    with open(args.file, "r") as f:
+        config = json.load(f)
+    check = nagiosplugin.Check(DisabledAlarms(args.regions, config["aws_access_key"], config["aws_secret_key"]), nagiosplugin.ScalarContext('disabledAlarms', 1), Summary())
     check.main()
 
 

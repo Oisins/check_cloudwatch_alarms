@@ -6,7 +6,7 @@ from mock import Mock
 from check_enabled_alarms import DisabledAlarms
 
 
-REGIONS = ['eu-west-1', 'us-east-1', 'sa-east-1']
+REGIONS = 'eu-west-1,us-east-1,sa-east-1'
 AWS_ACCESS_KEY_ID = "ABC"
 AWS_SECRET_ACCESS_KEY = "ABC"
 
@@ -25,7 +25,7 @@ class DisabledAlarmsTest(unittest.TestCase):
         boto.ec2.cloudwatch.connect_to_region = Mock(return_value=ConnectionMock)
         x = DisabledAlarms(REGIONS, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
         result = x.probe()
-        self.assertEquals(result, nagiosplugin.Metric('disabledAlarms', 2 * len(REGIONS)))
+        self.assertEquals(result, nagiosplugin.Metric('disabledAlarms', 2 * 3))
 
 
 if __name__ == '__main__':
